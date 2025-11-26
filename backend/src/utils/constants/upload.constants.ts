@@ -6,4 +6,3 @@ export const UPLOAD_CONSTANTS = {
   ALLOWED_EXTENSIONS: ['.jpg', '.jpeg', '.png', '.webp'],
   UPLOAD_DIR: env.UPLOAD_DIR,
 } as const;
-
