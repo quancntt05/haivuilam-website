@@ -1,21 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import morgan from 'morgan';
+import { env } from './config/env';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
-// Middleware
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: env.CORS_ORIGIN,
     credentials: true,
   })
 );
+const morganFormat = env.NODE_ENV === 'production' ? 'combined' : 'dev';
+app.use(morgan(morganFormat));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -41,8 +40,8 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(env.PORT, () => {
+  console.log(`Server is running on port ${env.PORT}`);
 });
 
 export default app;
