@@ -9,10 +9,10 @@ if (!fs.existsSync(UPLOAD_CONSTANTS.UPLOAD_DIR)) {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (_req, _file, cb) => {
     cb(null, UPLOAD_CONSTANTS.UPLOAD_DIR);
   },
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
     cb(null, `photo-${uniqueSuffix}${ext}`);
@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (
-  req: Express.Request,
+  _req: Express.Request,
   file: Express.Multer.File,
   cb: multer.FileFilterCallback
 ) => {

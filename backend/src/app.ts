@@ -6,6 +6,7 @@ import path from 'path';
 import { env } from './config/env';
 import authRoutes from './routes/auth.routes';
 import photoRoutes from './routes/photo.routes';
+import commentRoutes from './routes/comment.routes';
 import { UPLOAD_CONSTANTS } from './utils/constants/upload.constants';
 
 const app = express();
@@ -30,6 +31,7 @@ app.get('/health', (req, res) => {
 
 app.use(`/api/${env.API_VERSION}/auth`, authRoutes);
 app.use(`/api/${env.API_VERSION}/photos`, photoRoutes);
+app.use(`/api/${env.API_VERSION}/comments`, commentRoutes);
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
