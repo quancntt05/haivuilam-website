@@ -12,17 +12,34 @@ import { UPLOAD_CONSTANTS } from './utils/constants/upload.constants';
 
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
 app.use(
   cors({
     origin: env.CORS_ORIGIN,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
 const morganFormat = env.NODE_ENV === 'production' ? 'combined' : 'dev';
 app.use(morgan(morganFormat));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use('/uploads/photos', express.static(path.join(process.cwd(), UPLOAD_CONSTANTS.UPLOAD_DIR)));
 

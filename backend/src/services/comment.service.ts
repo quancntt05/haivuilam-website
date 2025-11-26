@@ -1,5 +1,5 @@
 import { prisma } from '../config/database';
-import { sanitizeCommentContent } from '../utils/validators/comment.validator';
+import { sanitizeComment } from '../utils/helpers/sanitize.helper';
 
 export interface CreateCommentData {
   photoId: string;
@@ -12,7 +12,7 @@ export interface UpdateCommentData {
 }
 
 export const createComment = async (data: CreateCommentData) => {
-  const sanitizedContent = sanitizeCommentContent(data.content);
+  const sanitizedContent = sanitizeComment(data.content);
 
   const comment = await prisma.comment.create({
     data: {
@@ -120,7 +120,7 @@ export const updateComment = async (id: string, userId: string, data: UpdateComm
     throw new Error('Unauthorized: You can only update your own comments');
   }
 
-  const sanitizedContent = sanitizeCommentContent(data.content);
+  const sanitizedContent = sanitizeComment(data.content);
 
   const updatedComment = await prisma.comment.update({
     where: { id },

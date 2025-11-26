@@ -14,8 +14,9 @@ const storage = multer.diskStorage({
   },
   filename: (_req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `photo-${uniqueSuffix}${ext}`);
+    const ext = path.extname(file.originalname).toLowerCase();
+    const sanitizedExt = ['.jpg', '.jpeg', '.png', '.webp'].includes(ext) ? ext : '.jpg';
+    cb(null, `photo-${uniqueSuffix}${sanitizedExt}`);
   },
 });
 

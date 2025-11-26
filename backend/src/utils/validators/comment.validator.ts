@@ -30,10 +30,6 @@ export const validateCommentContent = (
   return { isValid: true };
 };
 
-export const sanitizeCommentContent = (content: string): string => {
-  return content.trim().replace(/\s+/g, ' ');
-};
-
 export const validateCommentCreation = (data: {
   photoId: string;
   content: string;
