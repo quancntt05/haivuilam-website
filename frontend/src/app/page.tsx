@@ -29,7 +29,7 @@ export default function HomePage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto flex min-h-full flex-col px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold">All Photos</h1>
           {isAuthenticated && (
@@ -44,20 +44,16 @@ export default function HomePage() {
           )}
         </div>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 p-4 text-red-700">
-            <p>Error: {error.message}</p>
-          </div>
-        )}
-
-        <PhotoGrid
-          photos={photos}
-          loading={loading}
-          error={error}
-          hasMore={hasMore}
-          onLoadMore={handleLoadMore}
-          onRetry={() => fetchPhotos({ page, limit: 20 })}
-        />
+        <div className="relative flex-1">
+          <PhotoGrid
+            photos={photos}
+            loading={loading}
+            error={error}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
+            onRetry={() => fetchPhotos({ page, limit: 20 })}
+          />
+        </div>
       </div>
     </MainLayout>
   );
