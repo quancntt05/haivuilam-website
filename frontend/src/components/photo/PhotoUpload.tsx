@@ -6,9 +6,7 @@ import { UploadOutlined, DeleteOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { usePhotos } from '@/hooks/usePhotos';
 import { useAuth } from '@/hooks/useAuth';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+import { VALIDATION_RULES, validatePhotoFile } from '@/lib/utils/validation';
 
 export default function PhotoUpload() {
   const { uploadPhoto, loading } = usePhotos();
@@ -16,19 +14,6 @@ export default function PhotoUpload() {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const validateFile = (file: File): boolean => {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      message.error('Only JPEG, PNG, and WebP images are allowed');
-      return false;
-    }
-
-    if (file.size > MAX_FILE_SIZE) {
-      message.error('File size must be less than 5MB');
-      return false;
-    }
-
-    return true;
-  };
 
   const handleChange: UploadProps['onChange'] = info => {
     const { file } = info;
@@ -40,7 +25,9 @@ export default function PhotoUpload() {
     }
 
     if (file.originFileObj) {
-      if (!validateFile(file.originFileObj)) {
+      const validation = validatePhotoFile(file.originFileObj);
+      if (!validation.isValid) {
+        message.error(validation.error);
         setFileList([]);
         setPreview(null);
         return;
@@ -133,8 +120,8 @@ export default function PhotoUpload() {
       </Button>
 
       <div className="mt-4 text-sm text-gray-500">
-        <p>Allowed formats: JPEG, PNG, WebP</p>
-        <p>Max file size: 5MB</p>
+        <p>Allowed formats: {VALIDATION_RULES.PHOTO.ALLOWED_TYPES.join(', ').replace('image/', '').toUpperCase()}</p>
+        <p>Max file size: {VALIDATION_RULES.PHOTO.MAX_SIZE / (1024 * 1024)}MB</p>
       </div>
     </div>
   );

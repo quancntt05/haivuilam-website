@@ -7,10 +7,14 @@ import { Comment } from '@/types/comment.types';
 import { formatDistanceToNow } from 'date-fns';
 import { useComments } from '@/hooks/useComments';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  VALIDATION_RULES,
+  validateCommentContent,
+  sanitizeCommentContent,
+} from '@/lib/utils/validation';
 
 const { Text } = Typography;
 const { TextArea } = Input;
-const MAX_LENGTH = 1000;
 
 interface CommentItemProps {
   comment: Comment;
@@ -26,8 +30,16 @@ export default function CommentItem({ comment }: CommentItemProps) {
   const isOwner = user?.id === comment.userId;
 
   const handleEdit = async (values: { content: string }) => {
+    const sanitizedContent = sanitizeCommentContent(values.content);
+    const validation = validateCommentContent(sanitizedContent);
+
+    if (!validation.isValid) {
+      message.error(validation.error);
+      return;
+    }
+
     try {
-      await updateComment(comment.id, { content: values.content });
+      await updateComment(comment.id, { content: sanitizedContent });
       message.success('Comment updated successfully');
       setIsEditing(false);
       form.resetFields();
@@ -54,11 +66,17 @@ export default function CommentItem({ comment }: CommentItemProps) {
             name="content"
             rules={[
               { required: true, message: 'Please enter a comment' },
-              { min: 1, message: 'Comment must be at least 1 character' },
-              { max: MAX_LENGTH, message: `Comment must not exceed ${MAX_LENGTH} characters` },
+              {
+                min: VALIDATION_RULES.COMMENT.MIN_LENGTH,
+                message: `Comment must be at least ${VALIDATION_RULES.COMMENT.MIN_LENGTH} character`,
+              },
+              {
+                max: VALIDATION_RULES.COMMENT.MAX_LENGTH,
+                message: `Comment must not exceed ${VALIDATION_RULES.COMMENT.MAX_LENGTH} characters`,
+              },
             ]}
           >
-            <TextArea rows={3} maxLength={MAX_LENGTH} showCount />
+            <TextArea rows={3} maxLength={VALIDATION_RULES.COMMENT.MAX_LENGTH} showCount />
           </Form.Item>
           <Form.Item>
             <Space>

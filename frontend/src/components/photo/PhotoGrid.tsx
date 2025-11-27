@@ -3,18 +3,33 @@
 import { Row, Col, Empty, Button } from 'antd';
 import PhotoCard from './PhotoCard';
 import Loading from '@/components/common/Loading';
+import SkeletonLoader from '@/components/common/SkeletonLoader';
+import ErrorDisplay from '@/components/common/ErrorDisplay';
 import { Photo } from '@/types/photo.types';
 
 interface PhotoGridProps {
   photos: Photo[];
   loading?: boolean;
+  error?: Error | null;
   hasMore?: boolean;
   onLoadMore?: () => void;
+  onRetry?: () => void;
 }
 
-export default function PhotoGrid({ photos, loading, hasMore, onLoadMore }: PhotoGridProps) {
+export default function PhotoGrid({
+  photos,
+  loading,
+  error,
+  hasMore,
+  onLoadMore,
+  onRetry,
+}: PhotoGridProps) {
   if (loading && photos.length === 0) {
-    return <Loading tip="Loading photos..." />;
+    return <SkeletonLoader count={8} type="photo" />;
+  }
+
+  if (error) {
+    return <ErrorDisplay error={error} onRetry={onRetry} className="mb-4" />;
   }
 
   if (!loading && photos.length === 0) {

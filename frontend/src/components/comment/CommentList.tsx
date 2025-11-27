@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Empty, Spin } from 'antd';
+import { Empty } from 'antd';
 import { useComments } from '@/hooks/useComments';
 import CommentItem from './CommentItem';
-import Loading from '@/components/common/Loading';
+import SkeletonLoader from '@/components/common/SkeletonLoader';
+import ErrorDisplay from '@/components/common/ErrorDisplay';
 
 interface CommentListProps {
   photoId: string;
@@ -18,14 +19,16 @@ export default function CommentList({ photoId }: CommentListProps) {
   }, [photoId, fetchComments]);
 
   if (loading && comments.length === 0) {
-    return <Loading tip="Loading comments..." />;
+    return <SkeletonLoader count={3} type="comment" />;
   }
 
   if (error) {
     return (
-      <div className="text-center py-8 text-red-500">
-        <p>Failed to load comments: {error.message}</p>
-      </div>
+      <ErrorDisplay
+        error={error}
+        onRetry={() => fetchComments(photoId)}
+        className="mb-4"
+      />
     );
   }
 

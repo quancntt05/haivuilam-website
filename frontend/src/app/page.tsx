@@ -6,7 +6,6 @@ import MainLayout from '@/layouts/MainLayout';
 import PhotoGrid from '@/components/photo/PhotoGrid';
 import { usePhotos } from '@/hooks/usePhotos';
 import { useAuth } from '@/hooks/useAuth';
-import Loading from '@/components/common/Loading';
 import { Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -54,8 +53,10 @@ export default function HomePage() {
         <PhotoGrid
           photos={photos}
           loading={loading}
+          error={error}
           hasMore={hasMore}
           onLoadMore={handleLoadMore}
+          onRetry={() => fetchPhotos({ page, limit: 20 })}
         />
       </div>
     </MainLayout>

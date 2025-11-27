@@ -5,9 +5,13 @@ import { Form, Input, Button, message } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
 import { useComments } from '@/hooks/useComments';
 import { useAuth } from '@/hooks/useAuth';
+import {
+  VALIDATION_RULES,
+  validateCommentContent,
+  sanitizeCommentContent,
+} from '@/lib/utils/validation';
 
 const { TextArea } = Input;
-const MAX_LENGTH = 1000;
 
 interface CommentFormProps {
   photoId: string;
@@ -26,8 +30,16 @@ export default function CommentForm({ photoId, onSuccess }: CommentFormProps) {
       return;
     }
 
+    const sanitizedContent = sanitizeCommentContent(values.content);
+    const validation = validateCommentContent(sanitizedContent);
+
+    if (!validation.isValid) {
+      message.error(validation.error);
+      return;
+    }
+
     try {
-      await createComment({ photoId, content: values.content });
+      await createComment({ photoId, content: sanitizedContent });
       message.success('Comment added successfully');
       form.resetFields();
       setCharCount(0);
@@ -47,14 +59,20 @@ export default function CommentForm({ photoId, onSuccess }: CommentFormProps) {
         name="content"
         rules={[
           { required: true, message: 'Please enter a comment' },
-          { min: 1, message: 'Comment must be at least 1 character' },
-          { max: MAX_LENGTH, message: `Comment must not exceed ${MAX_LENGTH} characters` },
+          {
+            min: VALIDATION_RULES.COMMENT.MIN_LENGTH,
+            message: `Comment must be at least ${VALIDATION_RULES.COMMENT.MIN_LENGTH} character`,
+          },
+          {
+            max: VALIDATION_RULES.COMMENT.MAX_LENGTH,
+            message: `Comment must not exceed ${VALIDATION_RULES.COMMENT.MAX_LENGTH} characters`,
+          },
         ]}
       >
         <TextArea
           rows={4}
           placeholder="Write a comment..."
-          maxLength={MAX_LENGTH}
+          maxLength={VALIDATION_RULES.COMMENT.MAX_LENGTH}
           showCount
           onChange={e => setCharCount(e.target.value.length)}
         />

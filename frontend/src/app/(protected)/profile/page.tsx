@@ -14,7 +14,7 @@ const { Title, Text } = Typography;
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const { photos, pagination, loading, fetchPhotos, getUserPhotos } = usePhotos();
+  const { photos, pagination, loading, error, fetchPhotos, getUserPhotos } = usePhotos();
   const router = useRouter();
   const [page, setPage] = useState(1);
 
@@ -64,11 +64,12 @@ export default function ProfilePage() {
         <PhotoGrid
           photos={photos}
           loading={loading}
+          error={error}
           hasMore={hasMore}
           onLoadMore={handleLoadMore}
+          onRetry={() => user?.id && getUserPhotos(user.id, { page, limit: 20 })}
         />
       </div>
     </MainLayout>
   );
 }
-
