@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, Avatar, Space, Typography, Button, Modal, message } from 'antd';
 import { UserOutlined, DeleteOutlined } from '@ant-design/icons';
 import Image from 'next/image';
@@ -22,8 +22,13 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
   const { deletePhoto, loading } = usePhotos();
   const { user } = useAuth();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const commentListRef = useRef<{ refresh: () => void } | null>(null);
 
   const isOwner = user?.id === photo.userId;
+
+  const handleCommentAdded = () => {
+    commentListRef.current?.refresh();
+  };
 
   const handleDelete = async () => {
     try {
@@ -86,10 +91,10 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 space-y-4">
           <Title level={5}>Comments</Title>
-          <CommentList photoId={photo.id} />
-          <CommentForm photoId={photo.id} />
+          <CommentList ref={commentListRef} photoId={photo.id} />
+          <CommentForm photoId={photo.id} onCommentAdded={handleCommentAdded} />
         </div>
       </Card>
 

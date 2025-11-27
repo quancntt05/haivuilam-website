@@ -18,9 +18,10 @@ const { TextArea } = Input;
 
 interface CommentItemProps {
   comment: Comment;
+  onUpdate?: () => void;
 }
 
-export default function CommentItem({ comment }: CommentItemProps) {
+export default function CommentItem({ comment, onUpdate }: CommentItemProps) {
   const { updateComment, deleteComment, loading } = useComments();
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -43,6 +44,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
       message.success('Comment updated successfully');
       setIsEditing(false);
       form.resetFields();
+      onUpdate?.();
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Failed to update comment');
     }
@@ -53,6 +55,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
       await deleteComment(comment.id);
       message.success('Comment deleted successfully');
       setIsDeleteModalOpen(false);
+      onUpdate?.();
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Failed to delete comment');
     }
@@ -93,7 +96,7 @@ export default function CommentItem({ comment }: CommentItemProps) {
 
   return (
     <>
-      <Card className="mb-4">
+      <Card className="!mb-4">
         <div className="flex items-start justify-between">
           <Space className="flex-1">
             <Avatar src={comment.user?.image} icon={<UserOutlined />} />

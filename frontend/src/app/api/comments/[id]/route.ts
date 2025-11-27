@@ -3,21 +3,23 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/constants/api.constants';
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.accessToken) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+
+    if (!id) {
       return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
+        { success: false, message: 'Comment ID is required' },
+        { status: 400 }
       );
     }
 
-    const { id } = params;
     const body = await request.json();
     const url = `${API_BASE_URL}${API_ENDPOINTS.COMMENTS.BY_ID(id)}`;
 
@@ -47,19 +49,24 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.accessToken) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+
+    if (!id) {
       return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
+        { success: false, message: 'Comment ID is required' },
+        { status: 400 }
       );
     }
 
-    const { id } = params;
     const url = `${API_BASE_URL}${API_ENDPOINTS.COMMENTS.BY_ID(id)}`;
 
     const response = await fetch(url, {
@@ -83,4 +90,3 @@ export async function DELETE(
     );
   }
 }
-

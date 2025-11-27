@@ -16,9 +16,10 @@ const { TextArea } = Input;
 interface CommentFormProps {
   photoId: string;
   onSuccess?: () => void;
+  onCommentAdded?: () => void;
 }
 
-export default function CommentForm({ photoId, onSuccess }: CommentFormProps) {
+export default function CommentForm({ photoId, onSuccess, onCommentAdded }: CommentFormProps) {
   const { createComment, loading } = useComments();
   const { isAuthenticated } = useAuth();
   const [form] = Form.useForm();
@@ -44,6 +45,7 @@ export default function CommentForm({ photoId, onSuccess }: CommentFormProps) {
       form.resetFields();
       setCharCount(0);
       onSuccess?.();
+      onCommentAdded?.();
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Failed to add comment');
     }

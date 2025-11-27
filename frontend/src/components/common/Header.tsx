@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout, Avatar, Dropdown, Button, Space } from 'antd';
+import { Layout, Avatar, Dropdown, Button, Space, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined, HomeOutlined, UploadOutlined } from '@ant-design/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
@@ -50,31 +50,25 @@ export default function Header() {
   ];
 
   return (
-    <AntHeader className="bg-white shadow-sm flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <h1 className="text-xl font-bold text-primary-600 m-0">HaiVuiLam</h1>
+    <AntHeader className="flex items-center justify-between px-6 shadow-sm">
+      <div className="flex w-full items-center gap-4">
+        <h1 className="text-primary-600 m-0 text-xl font-bold">HaiVuiLam</h1>
         {isAuthenticated && (
-          <Space>
-            {navItems.map(item => (
-              <Button
-                key={item.key}
-                type="text"
-                icon={item.icon}
-                onClick={item.onClick}
-                className="flex items-center"
-              >
-                {item.label}
-              </Button>
-            ))}
-          </Space>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            defaultSelectedKeys={['home']}
+            items={navItems}
+            style={{ flex: 1, minWidth: 0, borderBottom: 'none', background: 'transparent' }}
+          />
         )}
       </div>
 
       {isAuthenticated && user ? (
-        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" className="w-full">
           <Space className="cursor-pointer">
             <Avatar src={user.image} icon={<UserOutlined />} />
-            <span className="hidden md:inline">{user.name || user.email}</span>
+            <span>{user.name || user.email}</span>
           </Space>
         </Dropdown>
       ) : (
@@ -85,4 +79,3 @@ export default function Header() {
     </AntHeader>
   );
 }
-
