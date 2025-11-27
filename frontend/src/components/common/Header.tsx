@@ -3,7 +3,8 @@
 import { Layout, Avatar, Dropdown, Button, Space, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined, HomeOutlined, UploadOutlined } from '@ant-design/icons';
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 import type { MenuProps } from 'antd';
 
 const { Header: AntHeader } = Layout;
@@ -11,6 +12,7 @@ const { Header: AntHeader } = Layout;
 export default function Header() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await logout();
@@ -49,6 +51,13 @@ export default function Header() {
     },
   ];
 
+  const selectedKey = useMemo(() => {
+    if (pathname === '/upload') {
+      return 'upload';
+    }
+    return 'home';
+  }, [pathname]);
+
   return (
     <AntHeader className="flex items-center justify-between px-6 shadow-sm">
       <div className="flex w-full items-center gap-4">
@@ -57,7 +66,7 @@ export default function Header() {
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['home']}
+            selectedKeys={[selectedKey]}
             items={navItems}
             style={{ flex: 1, minWidth: 0, borderBottom: 'none', background: 'transparent' }}
           />
