@@ -5,3 +5,14 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginationResponse {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
