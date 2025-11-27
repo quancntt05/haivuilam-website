@@ -1,5 +1,6 @@
+// Use INTERNAL_API_URL for server-side (Docker network) or NEXT_PUBLIC_API_URL for client-side
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export const API_VERSION = 'v1';
 
@@ -17,9 +18,7 @@ export const API_ENDPOINTS = {
   },
   COMMENTS: {
     BASE: `/api/${API_VERSION}/comments`,
-    BY_PHOTO: (photoId: string) =>
-      `/api/${API_VERSION}/comments/photo/${photoId}`,
+    BY_PHOTO: (photoId: string) => `/api/${API_VERSION}/comments/photo/${photoId}`,
     BY_ID: (id: string) => `/api/${API_VERSION}/comments/${id}`,
   },
 } as const;
-

@@ -1,11 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone', // Enable standalone output for Docker
   images: {
     remotePatterns: [
       {
         protocol: 'http',
         hostname: 'localhost',
+        port: '3001',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'backend',
         port: '3001',
         pathname: '/uploads/**',
       },
