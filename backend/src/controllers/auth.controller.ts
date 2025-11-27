@@ -79,7 +79,7 @@ export const refreshToken = async (req: AuthRequest, res: Response): Promise<voi
   }
 };
 
-export const logout = async (req: AuthRequest, res: Response): Promise<void> => {
+export const logout = async (_req: AuthRequest, res: Response): Promise<void> => {
   const response: ApiResponse = {
     success: true,
     message: 'Logout successful',
