@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import AuthProvider from '@/providers/AuthProvider';
 import { ConfigProvider } from 'antd';
 import '../styles/globals.css';
+import AuthProvider from '@/providers/AuthProvider';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,11 +14,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ConfigProvider>
-          <AuthProvider>{children}</AuthProvider>
-        </ConfigProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        <ErrorBoundary>
+          <ConfigProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ConfigProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );
