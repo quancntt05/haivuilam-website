@@ -53,7 +53,7 @@ app.use(
   express.static(path.join(process.cwd(), UPLOAD_CONSTANTS.UPLOAD_DIR))
 );
 
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
@@ -63,7 +63,7 @@ app.use(`/api/${env.API_VERSION}/comments`, commentRoutes);
 
 app.use(errorHandler);
 
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).json({
     success: false,
     message: 'Route not found',
