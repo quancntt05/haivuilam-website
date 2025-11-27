@@ -14,13 +14,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
-        <ErrorBoundary>
-          <ConfigProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </ConfigProvider>
-        </ErrorBoundary>
+    <html lang="en" suppressHydrationWarning className="h-full">
+      <body className={`${inter.className} h-full`} suppressHydrationWarning>
+        <div id="root" className="h-full">
+          <ErrorBoundary>
+            <ConfigProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </ConfigProvider>
+          </ErrorBoundary>
+        </div>
       </body>
     </html>
   );

@@ -13,10 +13,12 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <Layout className="flex min-h-screen flex-col">
-      <Header />
-      <Content className="flex min-h-0 flex-1 flex-col bg-gray-50">{children}</Content>
-      <Footer />
-    </Layout>
+    <div className="flex min-h-screen flex-col">
+      <Layout className="flex min-h-screen flex-col">
+        <Header />
+        <Content className="flex-1 bg-gray-50">{children}</Content>
+        <Footer />
+      </Layout>
+    </div>
   );
 }

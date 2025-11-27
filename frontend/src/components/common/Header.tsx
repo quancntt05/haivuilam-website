@@ -65,10 +65,10 @@ export default function Header() {
       </div>
 
       {isAuthenticated && user ? (
-        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" className="w-full">
-          <Space className="cursor-pointer">
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+          <Space className="w-3xs cursor-pointer">
             <Avatar src={user.image} icon={<UserOutlined />} />
-            <span>{user.name || user.email}</span>
+            <span className="text-white">{user.name || user.email}</span>
           </Space>
         </Dropdown>
       ) : (
