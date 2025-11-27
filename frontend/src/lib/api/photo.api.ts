@@ -22,13 +22,14 @@ export const photoApi = {
   async getPhotoById(id: string): Promise<PhotoDetail> {
     const response = await fetch(`/api/photos/${id}`);
 
+    const data: ApiResponse<PhotoDetail> = await response.json();
+
     if (!response.ok) {
-      throw new Error('Failed to fetch photo');
+      throw new Error(data.message || 'Failed to fetch photo');
     }
 
-    const data: ApiResponse<PhotoDetail> = await response.json();
     if (!data.data) {
-      throw new Error('Photo not found');
+      throw new Error(data.message || 'Photo not found');
     }
     return data.data;
   },

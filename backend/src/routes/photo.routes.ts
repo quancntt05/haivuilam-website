@@ -19,12 +19,12 @@ const router = Router();
 
 router.post('/upload', authMiddleware, uploadMiddleware.single('photo'), uploadPhotoHandler);
 router.get('/', validate(validatePagination()), getPhotos);
-router.get('/:id', validate([validateUUID()]), getPhoto);
 router.get(
   '/user/:userId',
   validate([validateUserId(), ...validatePagination()]),
   getUserPhotosHandler
 );
+router.get('/:id', validate([validateUUID()]), getPhoto);
 router.delete('/:id', authMiddleware, validate([validateUUID()]), deletePhotoHandler);
 
 export default router;

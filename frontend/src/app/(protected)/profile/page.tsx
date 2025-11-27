@@ -60,7 +60,9 @@ export default function ProfilePage() {
           </Space>
         </Card>
 
-        <Title level={3}>My Photos</Title>
+        <Title level={3} className="my-4">
+          My Photos
+        </Title>
         <PhotoGrid
           photos={photos}
           loading={loading}

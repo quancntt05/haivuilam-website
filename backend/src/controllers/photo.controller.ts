@@ -7,6 +7,7 @@ import {
   deletePhoto,
 } from '../services/photo.service';
 import { getFileUrl } from '../utils/helpers/file.helper';
+import { validatePhotoUpload } from '../utils/validators/photo.validator';
 import { ApiResponse } from '../types';
 import { AuthRequest } from '../middleware/auth.middleware';
 
@@ -27,6 +28,16 @@ export const uploadPhotoHandler = async (req: AuthRequest, res: Response): Promi
         message: 'Unauthorized',
       };
       res.status(401).json(response);
+      return;
+    }
+
+    const validation = validatePhotoUpload(req.file);
+    if (!validation.isValid) {
+      const response: ApiResponse = {
+        success: false,
+        message: validation.error,
+      };
+      res.status(400).json(response);
       return;
     }
 

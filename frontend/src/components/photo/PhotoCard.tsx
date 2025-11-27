@@ -20,21 +20,29 @@ export default function PhotoCard({ photo }: PhotoCardProps) {
     router.push(`/photos/${photo.id}`);
   };
 
-  const imageUrl = photo.url.startsWith('http')
-    ? photo.url
-    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${photo.url}`;
+  const getImageUrl = (url: string) => {
+    if (url.startsWith('http')) {
+      return url;
+    }
+    const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+    const parts = cleanUrl.split('/');
+    const filename = parts[parts.length - 1] || '';
+    return `/api/images/${filename}`;
+  };
+
+  const imageUrl = getImageUrl(photo.url);
 
   return (
     <Card
       hoverable
       className="w-full"
       cover={
-        <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
+        <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
           <Image
             src={imageUrl}
             alt={photo.originalName}
             fill
-            className="object-cover cursor-pointer"
+            className="cursor-pointer object-cover"
             onClick={handleClick}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             loading="lazy"

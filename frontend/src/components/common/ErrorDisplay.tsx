@@ -14,7 +14,7 @@ export default function ErrorDisplay({ error, onRetry, className }: ErrorDisplay
 
   return (
     <Alert
-      message="Error"
+      title="Error"
       description={errorMessage}
       type="error"
       showIcon
@@ -29,4 +29,3 @@ export default function ErrorDisplay({ error, onRetry, className }: ErrorDisplay
     />
   );
 }
-

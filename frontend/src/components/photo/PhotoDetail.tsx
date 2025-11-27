@@ -35,18 +35,26 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
     }
   };
 
-  const imageUrl = photo.url.startsWith('http')
-    ? photo.url
-    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${photo.url}`;
+  const getImageUrl = (url: string) => {
+    if (url.startsWith('http')) {
+      return url;
+    }
+    const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+    const parts = cleanUrl.split('/');
+    const filename = parts[parts.length - 1] || '';
+    return `/api/images/${filename}`;
+  };
+
+  const imageUrl = getImageUrl(photo.url);
 
   if (loading) {
     return <Loading tip="Loading..." />;
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
+    <div className="mx-auto w-full max-w-4xl p-4">
       <Card>
-        <div className="mb-4 flex justify-between items-start">
+        <div className="mb-4 flex items-start justify-between">
           <Space>
             <Avatar src={photo.user?.image} icon={<UserOutlined />} />
             <div>
@@ -58,23 +66,19 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
             </div>
           </Space>
           {isOwner && (
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => setIsDeleteModalOpen(true)}
-            >
+            <Button danger icon={<DeleteOutlined />} onClick={() => setIsDeleteModalOpen(true)}>
               Delete
             </Button>
           )}
         </div>
 
-        <div className="relative w-full mb-4 rounded-lg overflow-hidden bg-gray-100">
+        <div className="relative mb-4 w-full overflow-hidden rounded-lg bg-gray-100">
           <Image
             src={imageUrl}
             alt={photo.originalName}
             width={800}
             height={800}
-            className="w-full h-auto object-contain"
+            className="h-auto w-full object-contain"
             sizes="(max-width: 768px) 100vw, 800px"
             loading="lazy"
             placeholder="blur"
@@ -103,4 +107,3 @@ export default function PhotoDetail({ photo }: PhotoDetailProps) {
     </div>
   );
 }
-

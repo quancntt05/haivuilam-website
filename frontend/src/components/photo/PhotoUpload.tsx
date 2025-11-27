@@ -14,18 +14,11 @@ export default function PhotoUpload() {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
 
-
   const handleChange: UploadProps['onChange'] = info => {
-    const { file } = info;
-
-    if (file.status === 'removed') {
-      setFileList([]);
-      setPreview(null);
-      return;
-    }
+    const file = info.fileList[0];
 
     if (file.originFileObj) {
-      const validation = validatePhotoFile(file.originFileObj);
+      const validation = validatePhotoFile(file.originFileObj as File);
       if (!validation.isValid) {
         message.error(validation.error);
         setFileList([]);
@@ -33,12 +26,24 @@ export default function PhotoUpload() {
         return;
       }
 
-      setFileList([file]);
+      const fileWithStatus: UploadFile = {
+        ...file,
+        status: 'done',
+        uid: file.uid || `-${Date.now()}`,
+      };
+
+      setFileList([fileWithStatus]);
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result as string);
       };
+      reader.onerror = () => {
+        message.error('Failed to load image preview');
+      };
       reader.readAsDataURL(file.originFileObj);
+
+      message.success('File selected successfully');
     }
   };
 
@@ -74,8 +79,8 @@ export default function PhotoUpload() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Upload Photo</h2>
+    <div className="mx-auto w-full max-w-2xl rounded-lg bg-white p-6 shadow-md">
+      <h2 className="mb-4 text-2xl font-bold">Upload Photo</h2>
 
       <Upload
         fileList={fileList}
@@ -85,6 +90,7 @@ export default function PhotoUpload() {
         maxCount={1}
         listType="picture-card"
         className="w-full"
+        onRemove={handleRemove}
       >
         {fileList.length === 0 && (
           <div>
@@ -94,17 +100,17 @@ export default function PhotoUpload() {
         )}
       </Upload>
 
-      {preview && (
-        <div className="mt-4 relative">
-          <Image src={preview} alt="Preview" className="w-full rounded" />
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            onClick={handleRemove}
-            className="mt-2"
-          >
-            Remove
-          </Button>
+      {preview && fileList.length > 0 && (
+        <div className="mt-4">
+          <div className="mb-2 text-sm font-medium text-gray-700">Preview:</div>
+          <div className="relative">
+            <Image
+              src={preview}
+              alt="Preview"
+              className="w-full rounded border border-gray-200"
+              style={{ maxHeight: '400px', objectFit: 'contain' }}
+            />
+          </div>
         </div>
       )}
 
@@ -120,10 +126,12 @@ export default function PhotoUpload() {
       </Button>
 
       <div className="mt-4 text-sm text-gray-500">
-        <p>Allowed formats: {VALIDATION_RULES.PHOTO.ALLOWED_TYPES.join(', ').replace('image/', '').toUpperCase()}</p>
+        <p>
+          Allowed formats:{' '}
+          {VALIDATION_RULES.PHOTO.ALLOWED_TYPES.join(', ').replace('image/', '').toUpperCase()}
+        </p>
         <p>Max file size: {VALIDATION_RULES.PHOTO.MAX_SIZE / (1024 * 1024)}MB</p>
       </div>
     </div>
   );
 }
-

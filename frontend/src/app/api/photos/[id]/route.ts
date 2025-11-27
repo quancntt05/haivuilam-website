@@ -3,19 +3,28 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/route';
 import { API_BASE_URL, API_ENDPOINTS } from '@/lib/constants/api.constants';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: 'Photo ID is required' },
+        { status: 400 }
+      );
+    }
+
     const url = `${API_BASE_URL}${API_ENDPOINTS.PHOTOS.BY_ID(id)}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: 'no-store',
+    });
+
     const data = await response.json();
 
     return NextResponse.json(data, { status: response.status });
   } catch (error) {
+    console.error('Error fetching photo:', error);
     return NextResponse.json(
       {
         success: false,
@@ -29,19 +38,16 @@ export async function GET(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.accessToken) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     const url = `${API_BASE_URL}${API_ENDPOINTS.PHOTOS.BY_ID(id)}`;
 
     const response = await fetch(url, {
@@ -65,4 +71,3 @@ export async function DELETE(
     );
   }
 }
-

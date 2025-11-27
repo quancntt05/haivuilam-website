@@ -8,24 +8,18 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session?.accessToken) {
-      return NextResponse.json(
-        { success: false, message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
     const formData = await request.formData();
     const file = formData.get('photo') as File;
 
     if (!file) {
-      return NextResponse.json(
-        { success: false, message: 'No file provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, message: 'No file provided' }, { status: 400 });
     }
 
     const uploadFormData = new FormData();
-    uploadFormData.append('photo', file);
+    uploadFormData.append('photo', file, file.name);
 
     const url = `${API_BASE_URL}${API_ENDPOINTS.PHOTOS.UPLOAD}`;
 
@@ -51,4 +45,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

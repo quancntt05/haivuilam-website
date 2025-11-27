@@ -19,10 +19,11 @@ app.use(
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         scriptSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
+        imgSrc: ["'self'", 'data:', 'https:', 'http://localhost:3001'],
       },
     },
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   })
 );
 
@@ -41,7 +42,16 @@ app.use(morgan(morganFormat));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use('/uploads/photos', express.static(path.join(process.cwd(), UPLOAD_CONSTANTS.UPLOAD_DIR)));
+app.use(
+  '/uploads/photos',
+  (_req, res, next) => {
+    res.header('Access-Control-Allow-Origin', env.CORS_ORIGIN);
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+  },
+  express.static(path.join(process.cwd(), UPLOAD_CONSTANTS.UPLOAD_DIR))
+);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
