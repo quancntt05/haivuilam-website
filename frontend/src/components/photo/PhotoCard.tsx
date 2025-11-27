@@ -1,0 +1,70 @@
+'use client';
+
+import { Card, Avatar, Space, Typography } from 'antd';
+import { UserOutlined, MessageOutlined } from '@ant-design/icons';
+import Image from 'next/image';
+import { Photo } from '@/types/photo.types';
+import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
+
+const { Text } = Typography;
+
+interface PhotoCardProps {
+  photo: Photo;
+}
+
+export default function PhotoCard({ photo }: PhotoCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(`/photos/${photo.id}`);
+  };
+
+  const imageUrl = photo.url.startsWith('http')
+    ? photo.url
+    : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}${photo.url}`;
+
+  return (
+    <Card
+      hoverable
+      className="w-full"
+      cover={
+        <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
+          <Image
+            src={imageUrl}
+            alt={photo.originalName}
+            fill
+            className="object-cover cursor-pointer"
+            onClick={handleClick}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+      }
+    >
+      <Card.Meta
+        avatar={
+          <Avatar
+            src={photo.user?.image}
+            icon={<UserOutlined />}
+            alt={photo.user?.name || 'User'}
+          />
+        }
+        title={
+          <Space>
+            <Text strong>{photo.user?.name || photo.user?.email}</Text>
+            <Text type="secondary" className="text-xs">
+              {formatDistanceToNow(new Date(photo.createdAt), { addSuffix: true })}
+            </Text>
+          </Space>
+        }
+        description={
+          <Space>
+            <MessageOutlined />
+            <Text type="secondary">{photo._count?.comments || 0} comments</Text>
+          </Space>
+        }
+      />
+    </Card>
+  );
+}
+
