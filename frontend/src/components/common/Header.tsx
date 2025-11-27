@@ -21,7 +21,7 @@ export default function Header() {
       key: 'profile',
       icon: <UserOutlined />,
       label: 'Profile',
-      onClick: () => router.push('/'),
+      onClick: () => router.push('/profile'),
     },
     {
       type: 'divider',

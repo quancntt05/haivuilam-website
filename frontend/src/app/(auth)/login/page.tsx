@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import LoginButton from '@/components/auth/LoginButton';
 import Loading from '@/components/common/Loading';
+import AuthLayout from '@/layouts/AuthLayout';
 
 export default function LoginPage() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -21,7 +22,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <AuthLayout>
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
         <h1 className="mb-6 text-center text-3xl font-bold">Welcome</h1>
         <p className="mb-8 text-center text-gray-600">Sign in to continue to Photo Sharing App</p>
@@ -29,6 +30,6 @@ export default function LoginPage() {
           <LoginButton />
         </div>
       </div>
-    </div>
+    </AuthLayout>
   );
 }
