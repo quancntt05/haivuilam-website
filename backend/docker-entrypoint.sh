@@ -9,3 +9,4 @@ npx prisma migrate deploy
 echo "Starting application..."
 exec node dist/app.js
 
+

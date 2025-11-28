@@ -24,7 +24,11 @@ export function usePhotos() {
     setError(null);
     try {
       const data = await photoApi.getPhotos(params);
-      setPhotos(data.photos);
+      if (params?.page === 1 || !params?.page) {
+        setPhotos(data.photos);
+      } else {
+        setPhotos(prev => [...prev, ...data.photos]);
+      }
       setPagination(data.pagination);
       return data;
     } catch (err) {
@@ -57,7 +61,11 @@ export function usePhotos() {
     setError(null);
     try {
       const data = await photoApi.getUserPhotos(userId, params);
-      setPhotos(data.photos);
+      if (params?.page === 1 || !params?.page) {
+        setPhotos(data.photos);
+      } else {
+        setPhotos(prev => [...prev, ...data.photos]);
+      }
       setPagination(data.pagination);
       return data;
     } catch (err) {
